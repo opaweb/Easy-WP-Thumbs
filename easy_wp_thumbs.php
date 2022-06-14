@@ -52,7 +52,9 @@ if(!defined('EWPT_VER')) {
         'dropboxusercontent.com',
         'tumblr.com',
         '500px.net',
-        '500px.org'    
+        '500px.org',
+        's01.jetimgs.com',
+        'img.jetimob.com'
     );
     define('EWPT_ALLOW_EXTERNAL', $allowed_external); // (array) array of allowed websites where the script can fetch images
 
