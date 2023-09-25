@@ -1,6 +1,6 @@
 <?php
 /**
- * Easy WP thumbs v3.1.2
+ * Easy WP thumbs v3.3.0
  * NOTE: Designed for use with PHP version 5.2 and up. Requires at least WP 3.5
  * 
  * @author Luca Montanari (LCweb)
@@ -13,7 +13,7 @@
 
 // be sure ewpt has not been initialized yet
 if(!defined('EWPT_VER')) { 
-    define('EWPT_VER', '3.1.2');
+    define('EWPT_VER', '3.2.1');
     define('EWPT_ERROR_PREFIX', 'Easy WP Thumbs v'.EWPT_VER.' - '); 
 
 
@@ -86,6 +86,26 @@ if(!defined('EWPT_VER')) {
 
 
 
+    
+    //////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////////////
+
+
+    
+    
+    
+    // allow AVIF upload
+    if(function_exists('add_filter')) {
+        add_filter('upload_mimes', function($mimes) {
+            if(!isset($mimes['avif'])) {
+                $mimes['avif'] = 'image/avif';    
+            }
+            return $mimes;    
+        }, 999);   
+    }
+    
+
+
 
 
     //////////////////////////////////////////////////////////////////////////////////////////////
@@ -94,7 +114,7 @@ if(!defined('EWPT_VER')) {
 
 
 
-
+    
     /* SHORTCUT FUNCTION TO CREATE THUMB (to be used in WP pages)
      *
      * @param (string|int) $img_src - image source: could be the URL, a local path or a WP image ID
@@ -147,11 +167,15 @@ if(!defined('EWPT_VER')) {
         if(ob_get_level()) {
             ob_end_clean();
         }
+        
+        ini_set('display_errors', 1);
+        ini_set('display_startup_errors', 1);
+        error_reporting(E_ALL);	
 
         // check for external leechers
         ewpt_helpers::block_external_leechers();
 
-        // browser cache based onn URL
+        // browser cache based on URL
         ewpt_helpers::manage_browser_cache($_SERVER['REQUEST_URI']);
 
 
@@ -161,8 +185,7 @@ if(!defined('EWPT_VER')) {
 
         $ewpt  = new easy_wp_thumbs;
         $url   = urldecode(trim($_REQUEST['src']));
-
-
+        
         $thumb = $ewpt->get_thumb($url, $params, false, $stream = true);
         if(!$thumb) {
             header($_SERVER['SERVER_PROTOCOL'] . ' 400 Bad Request');
